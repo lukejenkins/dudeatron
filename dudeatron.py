@@ -7,6 +7,7 @@ execute commands, and parse the output for network management purposes.
 import os
 import sys
 import getpass
+from datetime import datetime
 from typing import Dict, List, Optional, Any
 from pathlib import Path
 
@@ -71,8 +72,9 @@ def prompt_for_credentials(config: Dict[str, str]) -> None:
             raise ValueError("Password cannot be empty")
 
     if not config["SSH_ENABLE_SECRET"]:
-        response = input("Enable secret (press Enter to skip): ")
-        config["SSH_ENABLE_SECRET"] = response.strip()
+        response = input("Enable secret (press Enter to use SSH password): ")
+        # If user presses Enter without input, reuse the SSH password
+        config["SSH_ENABLE_SECRET"] = response.strip() if response.strip() else config["SSH_PASSWORD"]
 
     print()
 
@@ -110,6 +112,22 @@ def read_hostnames_from_file(file_path: str) -> List[str]:
     return hostnames
 
 
+def setup_logs_directory() -> Path:
+    """Create logs directory if it doesn't exist.
+
+    Returns:
+        Path: Path object pointing to the logs directory.
+
+    Note:
+        The logs directory is created in the same location as the script.
+        This directory should be added to .gitignore to avoid committing
+        sensitive session logs to version control.
+    """
+    logs_dir = Path("logs")
+    logs_dir.mkdir(exist_ok=True)
+    return logs_dir
+
+
 def connect_and_execute_command(
     hostname: str,
     command: str,
@@ -124,7 +142,18 @@ def connect_and_execute_command(
 
     Returns:
         Optional[str]: Command output if successful, None if connection failed.
+
+    Note:
+        All SSH session traffic is logged to timestamped files in the logs/
+        directory for troubleshooting and audit purposes.
     """
+    # Set up logging directory and create timestamped log file
+    logs_dir = setup_logs_directory()
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # Sanitize hostname for use in filename (replace special chars with underscores)
+    safe_hostname = hostname.replace(".", "_").replace(":", "_")
+    session_log_path = logs_dir / f"{timestamp}_{safe_hostname}.log"
+
     device_params = {
         "device_type": config["DEVICE_TYPE"],
         "host": hostname,
@@ -132,6 +161,9 @@ def connect_and_execute_command(
         "password": config["SSH_PASSWORD"],
         "secret": config.get("SSH_ENABLE_SECRET", ""),
         "timeout": int(config.get("SSH_TIMEOUT", "30")),
+        "session_log": str(session_log_path),
+        "session_log_record_writes": True,
+        "session_log_file_mode": "write",
     }
 
     try:
@@ -195,7 +227,15 @@ def parse_show_version(output: str) -> Dict[str, Any]:
         line_lower = line.lower()
 
         # Extract software version (common patterns)
-        if "version" in line_lower and parsed_data["software_version"] is None:
+        # Prioritize "AP Running Image" pattern for version number (most specific)
+        if "ap running image" in line_lower:
+            parsed_data["software_version"] = line.strip()
+        # Match Cisco AP Software pattern (less specific, only if AP Running Image not found)
+        elif "cisco ap software" in line_lower and "release software" in line_lower:
+            if parsed_data["software_version"] is None:
+                parsed_data["software_version"] = line.strip()
+        # Match Cisco IOS patterns with "version" keyword
+        elif "version" in line_lower and parsed_data["software_version"] is None:
             if "cisco ios" in line_lower or "ios xe" in line_lower:
                 parsed_data["software_version"] = line.strip()
 

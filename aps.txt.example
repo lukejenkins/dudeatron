@@ -1,0 +1,9 @@
+# Access Point Hostnames
+# One hostname or IP address per line
+# Lines starting with # are ignored
+
+ap-building-1-floor-1
+ap-building-1-floor-2
+ap-building-2-floor-1
+192.168.1.100
+192.168.1.101

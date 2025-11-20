@@ -7,7 +7,23 @@ I hope you find something here useful.
 ## Features
 
 - [ ] Add support for SSHing to APs and then running & parsing the following commands:
-  - [ ] `show version`
+  - [ ] `show version` Parsing the following fields:
+    - [ ] AP Name
+    - [ ] Model
+    - [ ] Serial Number
+    - [ ] Base ethernet MAC Address
+    - [ ] Software Version (AP Running Image)
+    - [ ] Primary Boot Image
+    - [ ] Secondary Boot Image
+    - [ ] Uptime
+    - [ ] Last reload time
+    - [ ] Last reload reason
+    - [ ] Primary Boot Image Hash
+    - [ ] Secondary Boot Image Hash
+    - [ ] Radio FW version
+    - [ ] QC_IMAGE_VERSION_STRING
+    - [ ] NSS FW version
+    - [ ] Cloud ID
   - [ ] `show inventory`
 - [ ] Add support for SSHing to WLCs and then running & parsing the following commands:
   - [ ] `show version`

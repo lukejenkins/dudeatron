@@ -2,7 +2,7 @@
 
 A buddy to help me manage my wireless network.
 
-I hope you find something here useful. 
+I hope you find something here to be useful.
 
 ## Features
 
@@ -58,7 +58,6 @@ I hope you find something here useful.
     - [ ] `show ap name $AP_NAME cdp neighbors`
     - [ ] `show ap meraki monitoring summary`
     - [ ] `show ap name $AP_NAME inventory`
-
 
 ## AI Disclosure
 

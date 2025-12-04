@@ -213,3 +213,6 @@ __marimo__/
 aps.txt
 wlcs.txt
 output/
+
+.gemini/
+gha-creds-*.json

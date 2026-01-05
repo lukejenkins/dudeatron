@@ -1,4 +1,5 @@
 name: '🔀 Gemini Triage'
+# See AGENTS.md for canonical agent policy; this workflow wires the triage prompt.
 
 on:
   workflow_call:

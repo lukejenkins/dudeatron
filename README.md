@@ -34,6 +34,7 @@ I hope you find something here to be useful.
   - [ ] `show ap name $AP_NAME config general`
   - [ ] `show ap name $AP_NAME ethernet statistics`
   - [ ] `show ap cdp neighbors`
+  - [ ] `show ap meraki monitoring summary`
 - [ ] Implement `python-dotenv` for configuration management
 - [ ] Add data output to the following
   - [ ] Data output to json files
@@ -64,6 +65,10 @@ I hope you find something here to be useful.
 **Here there be robots!** I *think* they are friendly, but they might just be very good at pretending. You might be a fool if you use this project for anything other than as an example of how silly it can be to use AI to code with.
 
 > This project was developed with the assistance of language models from companies such as OpenAI and Anthropic, which provided suggestions and code snippets to enhance the functionality and efficiency of the tools. The models were used to generate code, documentation, distraction, moral support, moral turpitude, and explanations for various components of the project.
+
+## AI Agents
+
+Operational guidance for all AI agents is centralized in [AGENTS.md](AGENTS.md).
 
 ## License
 

@@ -1,4 +1,5 @@
 name: '🔎 Gemini Review'
+# See AGENTS.md for canonical agent policy; this workflow wires the review prompt.
 
 on:
   workflow_call:

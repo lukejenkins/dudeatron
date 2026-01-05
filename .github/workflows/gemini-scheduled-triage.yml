@@ -1,4 +1,5 @@
 name: '📋 Gemini Scheduled Issue Triage'
+# See AGENTS.md for canonical agent policy; this workflow wires the scheduled triage prompt.
 
 on:
   schedule:

@@ -1,4 +1,5 @@
 name: '🔀 Gemini Dispatch'
+# Canonical agent policy is defined in AGENTS.md; this workflow only routes requests.
 
 on:
   pull_request_review_comment:

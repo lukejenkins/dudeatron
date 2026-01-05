@@ -1,3 +1,4 @@
+# Canonical agent guidance lives in ../AGENTS.md; this prompt covers scheduled triage specifics.
 description = "Triages issues on a schedule with Gemini CLI"
 prompt = """
 ## Role

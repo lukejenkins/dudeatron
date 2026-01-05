@@ -74,6 +74,27 @@ All Python code must adhere to PEP 8 with these specifications:
 - **Docstrings**: Google style format for all modules, classes, and functions (PEP 257)
 - **Type annotations**: Use the `typing` module (e.g., `List[str]`, `Dict[str, int]`)
 
+## File Naming Conventions
+
+All generated files must follow this ISO 8601-inspired naming format:
+
+**Format**: `YYYYMMDD-HHMMSS-X[-Y][-Z].extension`
+
+**Components**:
+- `YYYYMMDD-HHMMSS`: Date and time from system clock in 24-hour format with leading zeros
+- `X`: DNS name OR IP address of the device (use whichever is actually used for the SSH connection) - **REQUIRED**
+- `Y`: Command run (e.g., `show-version`) - **OPTIONAL**, include only if a single command is being executed
+- `Z`: Application or utility name (e.g., `netmiko`) - **OPTIONAL**, include only for logs generated separately from the main SSH session
+
+**File Extensions**:
+- `.log` - Log files containing input/output from SSH sessions
+- `.json`, `.csv`, etc. - Parsed data files using the extension most customary for the format
+
+**Examples**:
+- `20260105-143022-192.168.1.100.log` - SSH session log for device at IP 192.168.1.100
+- `20260105-143022-ap-building-a.example.com-show-version.json` - Parsed data from single command
+- `20260105-143022-192.168.1.100-netmiko.log` - Netmiko-specific logs for SSH session
+
 ## Python Guidelines
 
 All Python code must adhere to PEP 8 standards with these specifications:

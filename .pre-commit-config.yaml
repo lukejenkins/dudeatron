@@ -1,0 +1,63 @@
+# Pre-commit hooks to catch sensitive information before commits
+# Install: pip install pre-commit
+# Setup: pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+  # Detect secrets and high-entropy strings
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: |
+          (?x)^(
+            aps\.txt\.example|
+            wlc\.txt\.example|
+            requirements\.txt
+          )$
+
+  # Git native checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # Prevent large files from being committed
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      # Check for merge conflicts
+      - id: check-merge-conflict
+      # Ensure proper JSON/YAML
+      - id: check-json
+      - id: check-yaml
+      # Fix line endings
+      - id: end-of-file-fixer
+      # Trim trailing whitespace
+      - id: trailing-whitespace
+
+  # Custom Python checks for this project
+  - repo: local
+    hooks:
+      - id: check-sensitive-patterns
+        name: Check for sensitive patterns
+        entry: python scripts/check_sensitive_data.py
+        language: python
+        types: [text]
+        exclude: |
+          (?x)^(
+            \.git/|
+            venv/|
+            \.venv/|
+            __pycache__|
+            \.DS_Store
+          )
+
+      - id: validate-example-files
+        name: Validate example files are anonymized
+        entry: python scripts/validate_examples.py
+        language: python
+        files: |
+          (?x)(
+            \.example$|
+            example\.
+          )
+        stages: [pre-commit]

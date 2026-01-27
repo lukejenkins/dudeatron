@@ -24,20 +24,17 @@ def load_environment_config() -> Dict[str, str]:
             Missing credentials will be set to empty strings and can be
             prompted for at runtime.
 
-    Raises:
-        ValueError: If DEVICE_TYPE environment variable is missing.
+    Note:
+        DEVICE_TYPE defaults to 'cisco_ios' for AP management.
+        Override in .env if needed for your specific AP model.
     """
     load_dotenv()
 
     config = {}
 
-    # Only DEVICE_TYPE is strictly required
-    device_type = os.getenv("DEVICE_TYPE")
-    if device_type is None:
-        raise ValueError(
-            "Missing required environment variable: DEVICE_TYPE"
-        )
-    config["DEVICE_TYPE"] = device_type
+    # DEVICE_TYPE defaults to cisco_ios for APs
+    # Can be overridden in .env for different AP models
+    config["DEVICE_TYPE"] = os.getenv("DEVICE_TYPE", "cisco_ios")
 
     # Credentials are optional - will prompt if missing
     config["SSH_USERNAME"] = os.getenv("SSH_USERNAME", "")

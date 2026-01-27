@@ -1,0 +1,9 @@
+# WLC (Wireless LAN Controller) Hostnames
+# One hostname or IP address per line
+# Lines starting with # are comments and will be ignored
+
+# Example entries:
+# wlc01.example.com
+# wlc02.example.com
+# 192.168.X.Y
+# 10.0.0.X

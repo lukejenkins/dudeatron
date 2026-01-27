@@ -125,14 +125,14 @@ Use these anonymization standards in any `.example` files:
 ## Documentation Guide
 
 **Start Here:**
-1. Read [SECURITY_COMPLETE.md](SECURITY_COMPLETE.md) - 5 min overview
+1. Read [SECURITY_COMPLETE.md](../docs/SECURITY_COMPLETE.md) - 5 min overview
 2. Run `bash scripts/install-hooks.sh` - Setup
 3. Done! Commits are now protected
 
 **Need More Details:**
-- [SECURITY_QUICKSTART.md](SECURITY_QUICKSTART.md) - Cheat sheet
-- [SECURITY.md](SECURITY.md) - Full guide with troubleshooting
-- [SECURITY_SETUP.md](SECURITY_SETUP.md) - Technical details
+- [SECURITY_QUICKSTART.md](../docs/SECURITY_QUICKSTART.md) - Cheat sheet
+- [SECURITY.md](../docs/SECURITY.md) - Full guide with troubleshooting
+- [SECURITY_SETUP.md](../docs/SECURITY_SETUP.md) - Technical details
 
 **See Everything:**
 - Run `python security_index.py` - Complete resource index
@@ -184,7 +184,7 @@ python scripts/security_scan.py
 | **Need to skip (not recommended)** | `git commit --no-verify` |
 | **Want to see what's checked** | `pre-commit run --all-files --dry-run` |
 
-See [SECURITY.md](SECURITY.md) for detailed troubleshooting.
+See [SECURITY.md](../docs/SECURITY.md) for detailed troubleshooting.
 
 ---
 
@@ -214,8 +214,8 @@ See [SECURITY.md](SECURITY.md) for detailed troubleshooting.
    - Hooks protect you silently in the background
 
 4. **Reference Material**:
-   - [SECURITY_QUICKSTART.md](SECURITY_QUICKSTART.md) - Quick answers
-   - [SECURITY.md](SECURITY.md) - Full documentation
+   - [SECURITY_QUICKSTART.md](../docs/SECURITY_QUICKSTART.md) - Quick answers
+   - [SECURITY.md](../docs/SECURITY.md) - Full documentation
    - `python security_index.py` - Resource index
 
 ---
@@ -242,8 +242,8 @@ A: Yes, fully compatible. Just add more repos to `.pre-commit-config.yaml`.
 ## Support
 
 All documentation is in the repository:
-- Quick answers: [SECURITY_QUICKSTART.md](SECURITY_QUICKSTART.md)
-- Full guide: [SECURITY.md](SECURITY.md)  
+- Quick answers: [SECURITY_QUICKSTART.md](../docs/SECURITY_QUICKSTART.md)
+- Full guide: [SECURITY.md](../docs/SECURITY.md)  
 - Resource index: Run `python security_index.py`
 
 You're all set! 🎉 Run the setup command and you're protected.

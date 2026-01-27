@@ -20,8 +20,8 @@ SECURITY_RESOURCES = {
     "Setup & Installation": {
         "description": "For initial setup and configuration",
         "files": [
-            ("SECURITY.md", "Comprehensive setup guide with troubleshooting"),
-            ("SECURITY_SETUP.md", "What was created and why"),
+            ("docs/SECURITY.md", "Comprehensive setup guide with troubleshooting"),
+            ("docs/SECURITY_SETUP.md", "What was created and why"),
             (".pre-commit-config.yaml", "Pre-commit hooks configuration"),
             (".secrets.baseline", "Secrets detection baseline"),
         ],

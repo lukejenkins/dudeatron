@@ -181,9 +181,9 @@ The CSV contains all available fields, organized roughly as:
 
 ## Next Steps
 
-- See [WLC_README.md](WLC_README.md) for detailed documentation
-- Check [DEVELOPMENT.md](DEVELOPMENT.md) for development setup
-- View [SESSION_SUMMARY.md](SESSION_SUMMARY.md) for recent updates
+- See [WLC_README.md](docs/WLC_README.md) for detailed documentation
+- Check [DEVELOPMENT.md](docs/DEVELOPMENT.md) for development setup
+- View [SESSION_SUMMARY.md](AGENT-Notes/SESSION_SUMMARY.md) for recent updates
 - Refer to [AGENTS.md](AGENTS.md) for project architecture
 
 ---

@@ -103,19 +103,29 @@ dudeatron/
 │   ├── README.md                 # This file
 │   ├── AGENTS.md                 # **START HERE** - AI agent guidelines and project overview
 │   ├── QUICKSTART.md             # Quick start guide for basic operations
-│   ├── WLC_README.md             # WLC management detailed documentation
-│   ├── SECURITY.md               # Security setup and pre-commit framework
-│   ├── SECURITY_QUICKSTART.md    # Quick reference for security setup
-│   ├── DEVELOPMENT.md            # Development guidelines and current status
 │   ├── CLAUDE.md                 # Pointer to AGENTS.md (for Claude AI)
-│   └── GEMINI.md                 # Pointer to AGENTS.md (for Gemini AI)
+│   ├── GEMINI.md                 # Pointer to AGENTS.md (for Gemini AI)
+│   ├── docs/                     # Detailed documentation
+│   │   ├── WLC_README.md         # WLC management detailed documentation
+│   │   ├── DEVELOPMENT.md        # Development guidelines and current status
+│   │   ├── SECURITY.md           # Security setup and pre-commit framework
+│   │   ├── SECURITY_QUICKSTART.md # Quick reference for security setup
+│   │   ├── SECURITY_SETUP.md     # Security configuration details
+│   │   ├── SECURITY_COMPLETE.md  # Security overview
+│   │   └── DOCUMENTATION_INDEX.md # Navigation hub for all docs
+│   └── AGENT-Notes/              # Session documentation
+│       ├── SESSION_SUMMARY.md    # Latest session quick summary
+│       ├── CLEANUP_CHECKLIST.md  # Session completion checklist
+│       └── SETUP_SUMMARY.txt     # Security setup summary
 │
-├── AGENT-Notes/ (Session Documentation)
-│   ├── SESSION_Claude-2026-01-06_WLC-Parser-Integration.md
-│   ├── SESSION_Claude-2026-01-06_Documentation-Cleanup.md
-│   └── SESSION_Unknown-2026-01-05_Security-Setup.md
+├── scripts/ (Security and utility scripts)
+│   ├── install-hooks.sh          # One-command pre-commit setup
+│   ├── check_sensitive_data.py   # Pattern detector for sensitive data
+│   ├── validate_examples.py      # Validates example files
+│   ├── security_scan.py          # Manual security scanner
+│   └── security_patterns.py      # Centralized pattern definitions
 │
-├── SECURITY/ (Security configuration and scripts)
+├── tests/ (Test and debugging scripts)
 │   ├── install-hooks.sh          # One-command pre-commit setup
 │   ├── check_sensitive_data.py   # Pattern detector for sensitive data
 │   ├── validate_examples.py      # Validates example files
@@ -142,14 +152,14 @@ dudeatron/
 **First time?** Start here:
 1. Read [AGENTS.md](AGENTS.md) for project overview and guidelines
 2. Follow [QUICKSTART.md](QUICKSTART.md) for basic setup
-3. See [WLC_README.md](WLC_README.md) for WLC-specific operations
+3. See [WLC_README.md](docs/WLC_README.md) for WLC-specific operations
 
 **For security setup:**
-- See [SECURITY_QUICKSTART.md](SECURITY_QUICKSTART.md) for quick reference
+- See [SECURITY_QUICKSTART.md](docs/SECURITY_QUICKSTART.md) for quick reference
 - Run `bash SECURITY/install-hooks.sh` to enable pre-commit protection
 
 **For development:**
-- Check [DEVELOPMENT.md](DEVELOPMENT.md) for current status and guidelines
+- Check [DEVELOPMENT.md](docs/DEVELOPMENT.md) for current status and guidelines
 - Review session notes in `AGENT-Notes/` directory for historical context
 
 ## AI Agents

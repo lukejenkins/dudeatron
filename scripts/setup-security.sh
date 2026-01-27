@@ -39,7 +39,7 @@ echo "[3/6] Checking configuration files..."
 FILES_TO_CHECK=(
     ".pre-commit-config.yaml"
     ".secrets.baseline"
-    "SECURITY.md"
+    "docs/SECURITY.md"
     "scripts/check_sensitive_data.py"
     "scripts/validate_examples.py"
     "scripts/security_scan.py"
@@ -105,7 +105,7 @@ if [ $SCAN_RESULT -eq 0 ]; then
     echo ""
     echo "Next steps:"
     echo "1. If pre-commit hook needed installation, run: pre-commit install"
-    echo "2. Review SECURITY.md for detailed setup and usage"
+    echo "2. Review docs/SECURITY.md for detailed setup and usage"
     echo "3. You're ready to commit safely!"
 else
     echo "⚠️  Some findings detected in security scan"

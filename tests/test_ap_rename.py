@@ -1,6 +1,6 @@
 """Tests for AP rename matching module."""
 
-from ap_rename import convert_mac_to_colon_format
+from ap_rename import convert_mac_to_colon_format, normalize_cdp_neighbor
 
 
 def test_convert_cisco_dotted_mac():
@@ -30,3 +30,26 @@ def test_convert_uppercase_colon_mac():
 def test_convert_empty_mac():
     """Empty string returns empty string."""
     assert convert_mac_to_colon_format("") == ""
+
+
+def test_normalize_fqdn_neighbor():
+    """Strip domain suffix from FQDN."""
+    assert (
+        normalize_cdp_neighbor("switch-1.mgmt.example.edu")
+        == "switch-1"
+    )
+
+
+def test_normalize_short_neighbor():
+    """Short name passes through (lowercased)."""
+    assert normalize_cdp_neighbor("SWITCH-1") == "switch-1"
+
+
+def test_normalize_neighbor_whitespace():
+    """Whitespace is stripped."""
+    assert normalize_cdp_neighbor("  switch-1  ") == "switch-1"
+
+
+def test_normalize_empty_neighbor():
+    """Empty string returns empty string."""
+    assert normalize_cdp_neighbor("") == ""

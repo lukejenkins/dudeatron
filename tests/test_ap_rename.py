@@ -8,6 +8,7 @@ import pytest
 from ap_rename import (
     build_cdp_lookup,
     convert_mac_to_colon_format,
+    extract_wlc_hostname,
     generate_cli_commands,
     match_aps,
     normalize_cdp_neighbor,
@@ -402,3 +403,22 @@ def test_update_csv_preserves_existing_fields():
     assert updated[0]["MAC Address"] == "aa:bb:cc:dd:ee:ff"
     assert updated[0]["Serial Number"] == "EXISTING1"
     assert updated[0]["Meraki Serial Number"] == "EXIST-MERA-0000"
+
+
+def test_extract_wlc_hostname_from_csv_path():
+    """Extract hostname from WLC CSV filename."""
+    assert extract_wlc_hostname(
+        "output/20260106-170800-ogden-wlc4.csv"
+    ) == "ogden-wlc4"
+
+
+def test_extract_wlc_hostname_nested_path():
+    """Handle nested directory paths."""
+    assert extract_wlc_hostname(
+        "/home/user/output/20260316-143022-device-1.csv"
+    ) == "device-1"
+
+
+def test_extract_wlc_hostname_fallback():
+    """Fall back to 'unknown' for unexpected formats."""
+    assert extract_wlc_hostname("random-file.csv") == "unknown"

@@ -377,3 +377,40 @@ def update_historical_csv(
         writer.writerows(updated_rows)
 
     return output_path
+
+
+def extract_wlc_hostname(csv_path: str) -> str:
+    """Extract the WLC hostname from a dudeatron_wlc.py CSV filename.
+
+    The CSV filename format is: YYYYMMDD-HHMMSS-<hostname>.csv
+    The hostname is everything after the second hyphen and before
+    .csv.
+
+    Args:
+        csv_path: Path to the WLC CSV file.
+
+    Returns:
+        WLC hostname string, or 'unknown' if format is not
+        recognized.
+    """
+    filename = Path(csv_path).stem  # Remove .csv extension
+
+    # Split on '-' and rejoin everything after the timestamp
+    # Format: YYYYMMDD-HHMMSS-<hostname>
+    parts = filename.split("-")
+
+    # Need at least 3 parts: date, time, hostname
+    if len(parts) < 3:
+        return "unknown"
+
+    # Verify first two parts look like a timestamp
+    if not (
+        len(parts[0]) == 8
+        and parts[0].isdigit()
+        and len(parts[1]) == 6
+        and parts[1].isdigit()
+    ):
+        return "unknown"
+
+    # Everything after the timestamp is the hostname
+    return "-".join(parts[2:])

@@ -223,3 +223,83 @@ def match_aps(
             needs_rename.append(entry)
 
     return already_renamed, needs_rename, unmatched
+
+
+def generate_cli_commands(
+    already_renamed: List[Dict],
+    needs_rename: List[Dict],
+    unmatched: List[Dict],
+) -> str:
+    """Generate IOS-XE WLC CLI commands for verification and renaming.
+
+    Returns a string containing pasteable CLI commands organized in
+    sections. The caller writes this to the output file.
+
+    Args:
+        already_renamed: APs whose names already match (verify only).
+        needs_rename: APs that need renaming (current name differs).
+        unmatched: APs with no current match (informational comments).
+
+    Returns:
+        Multi-line string of CLI commands with section headers as
+        IOS comments.
+    """
+    lines: List[str] = []
+
+    # Section 1: Verification of already-renamed APs
+    if already_renamed:
+        lines.append(
+            "! ====== VERIFICATION COMMANDS "
+            "(already renamed) ======"
+        )
+        for ap in already_renamed:
+            ap_name = ap.get(
+                "AP Name", ap.get("current_ap_name", "")
+            )
+            lines.append(
+                f"show ap name {ap_name} config general"
+            )
+        lines.append("")
+
+    # Section 2: Rename commands
+    if needs_rename:
+        lines.append("! ====== RENAME COMMANDS ======")
+        for ap in needs_rename:
+            current_name = ap["current_ap_name"]
+            desired_name = ap["AP Name"]
+            lines.append(
+                f"ap name {current_name} name {desired_name}"
+            )
+        lines.append("")
+
+    # Section 3: Post-rename verification
+    if needs_rename:
+        lines.append(
+            "! ====== VERIFICATION AFTER RENAME ======"
+        )
+        for ap in needs_rename:
+            desired_name = ap["AP Name"]
+            lines.append(
+                f"show ap summary | include {desired_name}"
+            )
+        lines.append("")
+
+    # Section 4: Unmatched APs
+    if unmatched:
+        lines.append(
+            "! ====== UNMATCHED APs "
+            "(no current AP found on expected port) ======"
+        )
+        for ap in unmatched:
+            ap_name = ap.get("AP Name", "unknown")
+            neighbor = ap.get("CDP Neighbor", "unknown")
+            port = ap.get(
+                "Port of CDP Neighbor", "unknown"
+            )
+            lines.append(
+                f"! {ap_name} expected on "
+                f"{neighbor} {port} — not found"
+            )
+        lines.append("")
+
+    return "\n".join(lines)

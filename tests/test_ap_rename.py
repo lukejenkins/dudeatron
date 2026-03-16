@@ -8,6 +8,7 @@ import pytest
 from ap_rename import (
     build_cdp_lookup,
     convert_mac_to_colon_format,
+    generate_cli_commands,
     match_aps,
     normalize_cdp_neighbor,
     read_current_wlc_csv,
@@ -256,3 +257,58 @@ def test_match_aps_unmatched():
     assert len(needs) == 0
     assert len(unmatched) == 1
     assert "current_ap_name" not in unmatched[0]
+
+
+def test_generate_cli_commands_rename():
+    """Generate rename commands for needs_rename APs."""
+    needs_rename = [
+        {
+            "AP Name": "ap-building-A",
+            "current_ap_name": "AP00XX.XXXX.0000",
+        }
+    ]
+    output = generate_cli_commands([], needs_rename, [])
+
+    assert "ap name AP00XX.XXXX.0000 name ap-building-A" in output
+
+
+def test_generate_cli_commands_verify():
+    """Generate verification commands for already-renamed APs."""
+    already_renamed = [
+        {
+            "AP Name": "ap-building-B",
+            "current_ap_name": "ap-building-B",
+        }
+    ]
+    output = generate_cli_commands(already_renamed, [], [])
+
+    assert "show ap name ap-building-B config general" in output
+
+
+def test_generate_cli_commands_unmatched():
+    """Generate comments for unmatched APs."""
+    unmatched = [
+        {
+            "AP Name": "ap-building-C",
+            "CDP Neighbor": "switch-2",
+            "Port of CDP Neighbor": "TenGigabitEthernet2/0/47",
+        }
+    ]
+    output = generate_cli_commands([], [], unmatched)
+
+    assert "ap-building-C" in output
+    assert "switch-2" in output
+    assert "TenGigabitEthernet2/0/47" in output
+
+
+def test_generate_cli_commands_post_rename_verify():
+    """Generate post-rename verification commands."""
+    needs_rename = [
+        {
+            "AP Name": "ap-building-A",
+            "current_ap_name": "AP00XX.XXXX.0000",
+        }
+    ]
+    output = generate_cli_commands([], needs_rename, [])
+
+    assert "show ap summary | include ap-building-A" in output

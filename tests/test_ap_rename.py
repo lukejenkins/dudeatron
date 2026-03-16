@@ -179,7 +179,7 @@ def test_build_cdp_lookup_duplicate_warns(capsys):
 
     assert lookup[("switch-1", "te1/0/47")]["ap_name"] == "first-ap"
     captured = capsys.readouterr()
-    assert "WARNING" in captured.err or "WARNING" in captured.out
+    assert "WARNING" in captured.err
 
 
 def test_match_aps_already_renamed():

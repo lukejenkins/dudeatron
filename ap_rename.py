@@ -7,6 +7,7 @@ historical CSV files with current device data.
 
 import csv
 import re
+import sys
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -108,3 +109,50 @@ def read_current_wlc_csv(file_path: str) -> List[Dict[str, str]]:
     with open(path, "r", encoding="utf-8", newline="") as f:
         reader = csv.DictReader(f)
         return list(reader)
+
+
+def build_cdp_lookup(
+    rows: List[Dict[str, str]],
+    neighbor_key: str,
+    port_key: str,
+) -> Dict[Tuple[str, str], Dict[str, str]]:
+    """Build a lookup dictionary keyed by normalized (cdp_neighbor, port).
+
+    Args:
+        rows: List of row dicts from a CSV file.
+        neighbor_key: Column name for the CDP neighbor field.
+        port_key: Column name for the port field.
+
+    Returns:
+        Dictionary mapping (normalized_neighbor, normalized_port) to
+        row dict. If duplicates exist, warns and keeps first occurrence.
+    """
+    lookup: Dict[Tuple[str, str], Dict[str, str]] = {}
+
+    for row in rows:
+        neighbor = normalize_cdp_neighbor(
+            row.get(neighbor_key, "")
+        )
+        port = row.get(port_key, "").strip().lower()
+
+        if not neighbor or not port:
+            continue
+
+        key = (neighbor, port)
+
+        if key in lookup:
+            existing_name = lookup[key].get("ap_name", "unknown")
+            new_name = row.get(
+                "ap_name", row.get("AP Name", "unknown")
+            )
+            print(
+                f"WARNING: Duplicate CDP key {key}, "
+                f"keeping first ('{existing_name}'), "
+                f"skipping '{new_name}'",
+                file=sys.stderr,
+            )
+            continue
+
+        lookup[key] = row
+
+    return lookup

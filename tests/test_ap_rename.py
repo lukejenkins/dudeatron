@@ -6,6 +6,7 @@ import tempfile
 import pytest
 
 from ap_rename import (
+    build_cdp_lookup,
     convert_mac_to_colon_format,
     normalize_cdp_neighbor,
     read_current_wlc_csv,
@@ -134,3 +135,47 @@ def test_read_current_wlc_csv():
 
     assert len(rows) == 1
     assert rows[0]["ap_name"] == "AP00XX.XXXX.0000"
+
+
+def test_build_cdp_lookup_basic():
+    """Build lookup keyed by normalized (neighbor, port)."""
+    rows = [
+        {
+            "ap_name": "AP00XX.XXXX.0000",
+            "neighbor_name": "switch-1.example.com",
+            "neighbor_port": "TenGigabitEthernet1/0/47",
+        },
+        {
+            "ap_name": "AP00XX.XXXX.0001",
+            "neighbor_name": "switch-1.example.com",
+            "neighbor_port": "TenGigabitEthernet1/0/48",
+        },
+    ]
+    lookup = build_cdp_lookup(rows, "neighbor_name", "neighbor_port")
+
+    assert ("switch-1", "tengigabitethernet1/0/47") in lookup
+    assert (
+        lookup[("switch-1", "tengigabitethernet1/0/47")]["ap_name"]
+        == "AP00XX.XXXX.0000"
+    )
+
+
+def test_build_cdp_lookup_duplicate_warns(capsys):
+    """Duplicate keys warn to stderr and keep first."""
+    rows = [
+        {
+            "ap_name": "first-ap",
+            "neighbor_name": "switch-1",
+            "neighbor_port": "Te1/0/47",
+        },
+        {
+            "ap_name": "second-ap",
+            "neighbor_name": "switch-1",
+            "neighbor_port": "Te1/0/47",
+        },
+    ]
+    lookup = build_cdp_lookup(rows, "neighbor_name", "neighbor_port")
+
+    assert lookup[("switch-1", "te1/0/47")]["ap_name"] == "first-ap"
+    captured = capsys.readouterr()
+    assert "WARNING" in captured.err or "WARNING" in captured.out

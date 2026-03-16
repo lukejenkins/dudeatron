@@ -303,3 +303,77 @@ def generate_cli_commands(
         lines.append("")
 
     return "\n".join(lines)
+
+
+def update_historical_csv(
+    historical_rows: List[Dict[str, str]],
+    matched: List[Dict],
+    output_path: str,
+) -> str:
+    """Write an updated historical CSV with data from matched APs.
+
+    Updates MAC Address, Serial Number, and Meraki Serial Number for
+    matched entries only when the historical value is empty. Preserves
+    all original columns and column order.
+
+    Args:
+        historical_rows: Original historical CSV rows (list of dicts).
+        matched: Concatenation of already_renamed + needs_rename
+            from match_aps.
+        output_path: Path to write the updated CSV file.
+
+    Returns:
+        Path to the written CSV file.
+    """
+    # Build a lookup from matched entries keyed by AP Name
+    match_lookup: Dict[str, Dict] = {}
+    for entry in matched:
+        ap_name = entry.get("AP Name", "")
+        if ap_name:
+            match_lookup[ap_name] = entry
+
+    # Get column order from the first row
+    if not historical_rows:
+        return output_path
+
+    fieldnames = list(historical_rows[0].keys())
+
+    # Update rows
+    updated_rows: List[Dict[str, str]] = []
+    for row in historical_rows:
+        updated_row = dict(row)
+        ap_name = row.get("AP Name", "")
+        match = match_lookup.get(ap_name)
+
+        if match:
+            # Only fill in empty fields
+            if not updated_row.get(
+                "MAC Address", ""
+            ).strip():
+                updated_row["MAC Address"] = match.get(
+                    "current_mac_address", ""
+                )
+            if not updated_row.get(
+                "Serial Number", ""
+            ).strip():
+                updated_row["Serial Number"] = match.get(
+                    "current_serial_number", ""
+                )
+            if not updated_row.get(
+                "Meraki Serial Number", ""
+            ).strip():
+                updated_row["Meraki Serial Number"] = (
+                    match.get("current_meraki_serial", "")
+                )
+
+        updated_rows.append(updated_row)
+
+    # Write the updated CSV
+    with open(
+        output_path, "w", newline="", encoding="utf-8"
+    ) as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(updated_rows)
+
+    return output_path

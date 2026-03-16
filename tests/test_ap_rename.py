@@ -13,6 +13,7 @@ from ap_rename import (
     normalize_cdp_neighbor,
     read_current_wlc_csv,
     read_historical_csv,
+    update_historical_csv,
 )
 
 
@@ -312,3 +313,92 @@ def test_generate_cli_commands_post_rename_verify():
     output = generate_cli_commands([], needs_rename, [])
 
     assert "show ap summary | include ap-building-A" in output
+
+
+def test_update_csv_fills_empty_fields():
+    """Fill in MAC/serial/meraki for matched APs with empty fields."""
+    historical_rows = [
+        {
+            "AP Name": "ap-building-A",
+            "MAC Address": "",
+            "Serial Number": "",
+            "Meraki Serial Number": "",
+            "CDP Neighbor": "switch-1",
+            "Port of CDP Neighbor": "TenGigabitEthernet1/0/47",
+        },
+    ]
+    matched = [
+        {
+            "AP Name": "ap-building-A",
+            "MAC Address": "",
+            "Serial Number": "",
+            "Meraki Serial Number": "",
+            "CDP Neighbor": "switch-1",
+            "Port of CDP Neighbor": "TenGigabitEthernet1/0/47",
+            "current_ap_name": "AP00XX.XXXX.0000",
+            "current_mac_address": "xx:xx:xx:xx:00:00",
+            "current_serial_number": "ABC0000",
+            "current_meraki_serial": "MERA-XXXX-0000",
+        },
+    ]
+
+    with tempfile.NamedTemporaryFile(
+        suffix=".csv", delete=False, mode="w"
+    ) as f:
+        output_path = f.name
+
+    result_path = update_historical_csv(
+        historical_rows, matched, output_path
+    )
+
+    updated = read_historical_csv(result_path)
+    os.unlink(result_path)
+
+    assert updated[0]["MAC Address"] == "xx:xx:xx:xx:00:00"
+    assert updated[0]["Serial Number"] == "ABC0000"
+    assert updated[0]["Meraki Serial Number"] == "MERA-XXXX-0000"
+
+
+def test_update_csv_preserves_existing_fields():
+    """Do not overwrite existing MAC/serial values."""
+    historical_rows = [
+        {
+            "AP Name": "ap-building-A",
+            "MAC Address": "aa:bb:cc:dd:ee:ff",
+            "Serial Number": "EXISTING1",
+            "Meraki Serial Number": "EXIST-MERA-0000",
+            "CDP Neighbor": "switch-1",
+            "Port of CDP Neighbor": "TenGigabitEthernet1/0/47",
+        },
+    ]
+    matched = [
+        {
+            "AP Name": "ap-building-A",
+            "MAC Address": "aa:bb:cc:dd:ee:ff",
+            "Serial Number": "EXISTING1",
+            "Meraki Serial Number": "EXIST-MERA-0000",
+            "CDP Neighbor": "switch-1",
+            "Port of CDP Neighbor": "TenGigabitEthernet1/0/47",
+            "current_ap_name": "ap-building-A",
+            "current_mac_address": "xx:xx:xx:xx:99:99",
+            "current_serial_number": "NEW0000",
+            "current_meraki_serial": "NEW-MERA-0000",
+        },
+    ]
+
+    with tempfile.NamedTemporaryFile(
+        suffix=".csv", delete=False, mode="w"
+    ) as f:
+        output_path = f.name
+
+    result_path = update_historical_csv(
+        historical_rows, matched, output_path
+    )
+
+    updated = read_historical_csv(result_path)
+    os.unlink(result_path)
+
+    # Existing values should NOT be overwritten
+    assert updated[0]["MAC Address"] == "aa:bb:cc:dd:ee:ff"
+    assert updated[0]["Serial Number"] == "EXISTING1"
+    assert updated[0]["Meraki Serial Number"] == "EXIST-MERA-0000"

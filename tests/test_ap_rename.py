@@ -1,0 +1,32 @@
+"""Tests for AP rename matching module."""
+
+from ap_rename import convert_mac_to_colon_format
+
+
+def test_convert_cisco_dotted_mac():
+    """Convert Cisco dotted MAC to colon-separated lowercase."""
+    assert (
+        convert_mac_to_colon_format("687d.b45c.1f10")
+        == "68:7d:b4:5c:1f:10"
+    )
+
+
+def test_convert_already_colon_mac():
+    """Colon-separated MACs pass through unchanged."""
+    assert (
+        convert_mac_to_colon_format("aa:bb:cc:dd:ee:ff")
+        == "aa:bb:cc:dd:ee:ff"
+    )
+
+
+def test_convert_uppercase_colon_mac():
+    """Uppercase colon-separated MACs are lowercased."""
+    assert (
+        convert_mac_to_colon_format("AA:BB:CC:DD:EE:FF")
+        == "aa:bb:cc:dd:ee:ff"
+    )
+
+
+def test_convert_empty_mac():
+    """Empty string returns empty string."""
+    assert convert_mac_to_colon_format("") == ""

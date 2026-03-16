@@ -156,3 +156,70 @@ def build_cdp_lookup(
         lookup[key] = row
 
     return lookup
+
+
+def match_aps(
+    historical: List[Dict[str, str]],
+    current_lookup: Dict[Tuple[str, str], Dict[str, str]],
+) -> Tuple[List[Dict], List[Dict], List[Dict]]:
+    """Match historical AP records against current WLC data.
+
+    Matches by CDP neighbor + port.
+
+    Args:
+        historical: List of historical CSV row dicts.
+        current_lookup: Lookup dict from build_cdp_lookup keyed by
+            normalized (neighbor, port).
+
+    Returns:
+        Tuple of (already_renamed, needs_rename, unmatched) lists.
+        Matched entries include current_ap_name, current_mac_address,
+        current_serial_number, and current_meraki_serial fields.
+        Unmatched entries contain only historical fields.
+    """
+    already_renamed: List[Dict] = []
+    needs_rename: List[Dict] = []
+    unmatched: List[Dict] = []
+
+    for row in historical:
+        neighbor = normalize_cdp_neighbor(
+            row.get("CDP Neighbor", "")
+        )
+        port = row.get(
+            "Port of CDP Neighbor", ""
+        ).strip().lower()
+
+        if not neighbor or not port:
+            unmatched.append(dict(row))
+            continue
+
+        key = (neighbor, port)
+        current = current_lookup.get(key)
+
+        if current is None:
+            unmatched.append(dict(row))
+            continue
+
+        # Build matched entry with historical + current data
+        entry = dict(row)
+        entry["current_ap_name"] = current.get("ap_name", "")
+        entry["current_mac_address"] = convert_mac_to_colon_format(
+            current.get("mac_address", "")
+        )
+        entry["current_serial_number"] = current.get(
+            "serial_number", ""
+        )
+        entry["current_meraki_serial"] = current.get(
+            "cloud_id", ""
+        )
+
+        # Compare AP names case-insensitively
+        historical_name = row.get("AP Name", "").strip().lower()
+        current_name = current.get("ap_name", "").strip().lower()
+
+        if historical_name == current_name:
+            already_renamed.append(entry)
+        else:
+            needs_rename.append(entry)
+
+    return already_renamed, needs_rename, unmatched

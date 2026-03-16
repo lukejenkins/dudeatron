@@ -8,6 +8,7 @@ import pytest
 from ap_rename import (
     build_cdp_lookup,
     convert_mac_to_colon_format,
+    match_aps,
     normalize_cdp_neighbor,
     read_current_wlc_csv,
     read_historical_csv,
@@ -179,3 +180,79 @@ def test_build_cdp_lookup_duplicate_warns(capsys):
     assert lookup[("switch-1", "te1/0/47")]["ap_name"] == "first-ap"
     captured = capsys.readouterr()
     assert "WARNING" in captured.err or "WARNING" in captured.out
+
+
+def test_match_aps_already_renamed():
+    """AP with matching name classified as already_renamed."""
+    historical = [
+        {
+            "AP Name": "ap-building-A",
+            "CDP Neighbor": "switch-1",
+            "Port of CDP Neighbor": "TenGigabitEthernet1/0/47",
+        }
+    ]
+    current_lookup = {
+        ("switch-1", "tengigabitethernet1/0/47"): {
+            "ap_name": "ap-building-A",
+            "mac_address": "xxxx.xxxx.0000",
+            "serial_number": "ABC0000",
+            "cloud_id": "MERA-XXXX-0000",
+        }
+    }
+    already, needs, unmatched = match_aps(
+        historical, current_lookup
+    )
+
+    assert len(already) == 1
+    assert len(needs) == 0
+    assert len(unmatched) == 0
+    assert already[0]["current_ap_name"] == "ap-building-A"
+    assert already[0]["current_mac_address"] == "xx:xx:xx:xx:00:00"
+
+
+def test_match_aps_needs_rename():
+    """AP with different name classified as needs_rename."""
+    historical = [
+        {
+            "AP Name": "ap-building-B",
+            "CDP Neighbor": "switch-1",
+            "Port of CDP Neighbor": "TenGigabitEthernet1/0/48",
+        }
+    ]
+    current_lookup = {
+        ("switch-1", "tengigabitethernet1/0/48"): {
+            "ap_name": "AP00XX.XXXX.0001",
+            "mac_address": "xxxx.xxxx.0001",
+            "serial_number": "ABC0001",
+            "cloud_id": "MERA-XXXX-0001",
+        }
+    }
+    already, needs, unmatched = match_aps(
+        historical, current_lookup
+    )
+
+    assert len(already) == 0
+    assert len(needs) == 1
+    assert len(unmatched) == 0
+    assert needs[0]["AP Name"] == "ap-building-B"
+    assert needs[0]["current_ap_name"] == "AP00XX.XXXX.0001"
+
+
+def test_match_aps_unmatched():
+    """AP with no current match classified as unmatched."""
+    historical = [
+        {
+            "AP Name": "ap-building-C",
+            "CDP Neighbor": "switch-2",
+            "Port of CDP Neighbor": "TenGigabitEthernet2/0/47",
+        }
+    ]
+    current_lookup = {}
+    already, needs, unmatched = match_aps(
+        historical, current_lookup
+    )
+
+    assert len(already) == 0
+    assert len(needs) == 0
+    assert len(unmatched) == 1
+    assert "current_ap_name" not in unmatched[0]

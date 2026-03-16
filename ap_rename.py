@@ -5,7 +5,10 @@ using CDP neighbor/port data, generate IOS-XE rename commands, and update
 historical CSV files with current device data.
 """
 
+import csv
 import re
+from pathlib import Path
+from typing import Dict, List, Tuple
 
 
 def convert_mac_to_colon_format(mac: str) -> str:
@@ -59,3 +62,49 @@ def normalize_cdp_neighbor(name: str) -> str:
         name = name.split(".")[0]
 
     return name
+
+
+def read_historical_csv(file_path: str) -> List[Dict[str, str]]:
+    """Read the historical CSV mapping file.
+
+    Handles both utf-8 and utf-8-sig encoding (Excel BOM).
+
+    Args:
+        file_path: Path to the historical CSV file.
+
+    Returns:
+        List of row dictionaries preserving all original columns.
+
+    Raises:
+        FileNotFoundError: If the file does not exist.
+    """
+    path = Path(file_path)
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Historical CSV not found: {file_path}"
+        )
+
+    with open(path, "r", encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        return list(reader)
+
+
+def read_current_wlc_csv(file_path: str) -> List[Dict[str, str]]:
+    """Read the current WLC CSV produced by dudeatron_wlc.py.
+
+    Args:
+        file_path: Path to the WLC CSV file.
+
+    Returns:
+        List of row dictionaries.
+
+    Raises:
+        FileNotFoundError: If the file does not exist.
+    """
+    path = Path(file_path)
+    if not path.exists():
+        raise FileNotFoundError(f"WLC CSV not found: {file_path}")
+
+    with open(path, "r", encoding="utf-8", newline="") as f:
+        reader = csv.DictReader(f)
+        return list(reader)

@@ -365,28 +365,33 @@ ssh -l admin <wlc_ip> 'show ap summary' > /tmp/raw_output.txt
 This session completed the WLC management implementation with full Genie parser integration:
 
 **Environment & Setup**
+
 - Recreated `.venv` from scratch with Python 3.14
 - Resolved Genie stub compatibility issues:
-  - Added `declare_token()` method to `_AbstractStub` 
+  - Added `declare_token()` method to `_AbstractStub`
   - Updated `_Placeholder.__init__()` to accept variadic args for schema patterns like `Or(int, str)`
 - All three Genie parsers working correctly
 
 **Bug Fixes**
+
 - **CDP Parser Regex**: Fixed `show ap cdp neighbors` regex to capture `neighbor_ip` from command output (was parsing 0 entries, now correctly parses 76+)
 - **Radio MAC Merge**: Added `radio_mac` to Meraki data merge logic in `combine_wlc_data_to_csv()` (was being discarded during merge)
 - **CSV Columns**: Removed empty columns (`capability`, `local_port`) that weren't populated by parsers
 
 **Feature Enhancements**
+
 - Added CLI option `-o/--output-dir` for specifying output directory
 - Added `OUTPUT_DIR` configuration option in `.env`
 - Output directory precedence: CLI args > .env variable > current directory
 
 **Testing & Validation**
+
 - Small WLC: Successfully processed 77 APs with Genie parsers
 - Large WLC: Successfully processed 2,056 APs without errors (validates scalability)
 - All 77 APs have valid `radio_mac` values from merged data sources
 
 **Documentation**
+
 - Updated [WLC_README.md](WLC_README.md) with:
   - Genie parser details and integration approach
   - Complete CSV column documentation with data sources
@@ -396,18 +401,21 @@ This session completed the WLC management implementation with full Genie parser 
 - Updated [AGENTS.md](AGENTS.md) with comprehensive session summary
 
 ### Files Modified
+
 - [wlc_module.py](wlc_module.py) - Fixed radio_mac merge in combine_wlc_data_to_csv()
 - [dudeatron_wlc.py](dudeatron_wlc.py) - Added argparse for output directory option
 - [WLC_README.md](WLC_README.md) - Comprehensive documentation overhaul
 - [AGENTS.md](AGENTS.md) - Session completion summary
 
 ### Test Results
+
 - **Output File**: `output/20260106-171253-ogden-wlc4.csv`
 - **Rows**: 77 APs + 1 header = 78 total
 - **Columns**: 16 (dynamically generated from all three command sources)
 - **Data Quality**: All radio_mac values populated from merged sources
 
 ### Known Limitations & Future Work
+
 - Single serial SSH connections (concurrent support planned)
 - Meraki monitoring parser is custom (not in upstream Genie yet)
 - Additional WLC commands not yet implemented (show version, show inventory, show ap config general)

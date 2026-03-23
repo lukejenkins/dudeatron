@@ -5,10 +5,12 @@ Your repository is now protected with comprehensive pre-commit security checks t
 ## What Was Created
 
 ### Configuration Files
+
 - **[.pre-commit-config.yaml](.pre-commit-config.yaml)** - Pre-commit hooks configuration
 - **[.secrets.baseline](.secrets.baseline)** - Secrets detection baseline
 
 ### Security Scripts (in `scripts/`)
+
 - **[scripts/install-hooks.sh](scripts/install-hooks.sh)** - One-command setup (recommended)
 - **[scripts/check_sensitive_data.py](scripts/check_sensitive_data.py)** - Custom pattern detector
 - **[scripts/validate_examples.py](scripts/validate_examples.py)** - Example file validator
@@ -16,6 +18,7 @@ Your repository is now protected with comprehensive pre-commit security checks t
 - **[scripts/setup-security.sh](scripts/setup-security.sh)** - Setup verification checklist
 
 ### Documentation
+
 - **[SECURITY.md](SECURITY.md)** - Full setup and usage guide
 - **[SECURITY_QUICKSTART.md](SECURITY_QUICKSTART.md)** - Quick reference card
 - **[SECURITY_SETUP.md](SECURITY_SETUP.md)** - Summary of what was set up
@@ -42,7 +45,7 @@ That's it! You're protected. Your next commit will be automatically checked.
 ## What Gets Protected
 
 ✅ **Public IP addresses** (allows 192.168.X.Y, 10.0.0.X)
-✅ **MAC addresses** 
+✅ **MAC addresses**
 ✅ **Device serial numbers**
 ✅ **Passwords and API keys**
 ✅ **SSH private keys**
@@ -55,6 +58,7 @@ That's it! You're protected. Your next commit will be automatically checked.
 ## Using Your New Security Setup
 
 ### Scenario 1: I'm Ready to Commit
+
 ```bash
 git add .
 git commit -m "My changes"
@@ -64,6 +68,7 @@ git commit -m "My changes"
 ```
 
 ### Scenario 2: I Want to Check Before Committing
+
 ```bash
 python scripts/security_scan.py
 # Shows any sensitive data found
@@ -71,6 +76,7 @@ python scripts/security_scan.py
 ```
 
 ### Scenario 3: I Need a Comprehensive Check
+
 ```bash
 pre-commit run --all-files
 # Runs all configured hooks
@@ -78,7 +84,8 @@ pre-commit run --all-files
 ```
 
 ### Scenario 4: I Want to Update Example Files
-```
+
+```text
 Use these formats ONLY in example files:
 - IPs:        192.168.X.Y or 10.0.0.X
 - MACs:       XX:XX:XX:XX:XX:XX
@@ -93,7 +100,7 @@ Use these formats ONLY in example files:
 
 The output will tell you exactly what was found. Example:
 
-```
+```text
 ❌ Sensitive data detected:
 
 output/report.csv:
@@ -102,6 +109,7 @@ output/report.csv:
 ```
 
 **Fix it by:**
+
 1. Replace `8.8.8.8` with `192.168.X.Y` (if it's an example)
 2. Or move the file to `.gitignore` (if it's production data)
 3. Then `git add` and `git commit` again
@@ -111,6 +119,7 @@ output/report.csv:
 ## Files Already Protected by .gitignore
 
 These are already configured to never be committed:
+
 - ✅ `aps.txt` - Your actual AP list
 - ✅ `wlc.txt` - Your actual WLC list
 - ✅ `.env` - Your credentials
@@ -132,6 +141,7 @@ If you need to handle secrets in CI/CD pipelines:
 ## Troubleshooting
 
 **Hooks not running?**
+
 ```bash
 # Reinstall them
 pre-commit uninstall
@@ -139,12 +149,14 @@ pre-commit install
 ```
 
 **False positive detected?**
+
 ```bash
 # Review it, then add to baseline if legitimate
 pre-commit run detect-secrets -- --update-baseline
 ```
 
 **Need to skip hooks (not recommended)?**
+
 ```bash
 git commit --no-verify -m "message"
 # Only use if you're absolutely certain
@@ -157,7 +169,7 @@ For more help, see [SECURITY.md](SECURITY.md)
 ## Key Files Reference
 
 | Need? | File |
-|-------|------|
+| ----- | ---- |
 | Quick setup | [scripts/install-hooks.sh](scripts/install-hooks.sh) |
 | How does it work? | [SECURITY.md](SECURITY.md) |
 | Quick reference | [SECURITY_QUICKSTART.md](SECURITY_QUICKSTART.md) |

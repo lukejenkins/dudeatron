@@ -72,7 +72,7 @@ ABC0000
 ## Anonymization Quick Reference
 
 | Item | Real | Anonymized |
-|------|------|------------|
+| ---- | ---- | ---------- |
 | IP | 10.1.2.50 | 192.168.X.Y |
 | MAC | 00:11:22:33:44:55 | XX:XX:XX:XX:XX:XX |
 | Serial | FOC123456789 | ABC0000 |

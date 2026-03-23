@@ -2,7 +2,7 @@
 
 ## Installation (First Time)
 
-```bash
+```shell
 # Clone repositories
 git clone https://github.com/lukejenkins/dudeatron.git
 cd dudeatron
@@ -23,7 +23,8 @@ pip install -r requirements.txt
 ## Configuration
 
 ### 1. Create `.env` file
-```bash
+
+```shell
 cp .env.example .env
 
 # Edit .env with your credentials:
@@ -35,7 +36,8 @@ OUTPUT_DIR=./output  # optional
 ```
 
 ### 2. Create device list
-```bash
+
+```shell
 # Create wlc.txt with your WLC hostnames/IPs (one per line)
 cat > wlc.txt << EOF
 wlc01.example.com
@@ -47,19 +49,22 @@ EOF
 ## Usage
 
 ### Basic Usage
-```bash
+
+```shell
 source .venv/bin/activate
 python dudeatron_wlc.py
 ```
 
 ### With Custom Output Directory
-```bash
+
+```shell
 python dudeatron_wlc.py -o ./my_data
 python dudeatron_wlc.py --output-dir /tmp/wlc_export
 ```
 
 ### Using Environment Variable
-```bash
+
+```shell
 # Set in .env:
 OUTPUT_DIR=/path/to/output
 
@@ -70,11 +75,13 @@ python dudeatron_wlc.py
 ## Output
 
 ### CSV File Format
+
 - **Name**: `YYYYMMDD-HHMMSS-hostname.csv`
 - **Location**: Specified by `-o`, `OUTPUT_DIR`, or current directory
 - **Contents**: Merged data from 3 commands (show ap summary, show ap cdp neighbors, show ap meraki monitoring summary)
 
 ### Session Log Format
+
 - **Name**: `YYYYMMDD-HHMMSS-hostname.log`
 - **Location**: `logs/` directory
 - **Contents**: Complete SSH session transcript for debugging
@@ -82,35 +89,42 @@ python dudeatron_wlc.py
 ## Available Data Fields
 
 ### From `show ap summary`
+
 - AP name, model, radio MAC, ethernet MAC, slots
 - Location, country, regulatory domain, IP address, state
 
 ### From `show ap cdp neighbors`  
+
 - Neighbor switch name, IP address, port
 
 ### From `show ap meraki monitoring summary`
+
 - Serial number, cloud ID, Meraki status
 
 ## Troubleshooting
 
 ### "ModuleNotFoundError: No module named 'dotenv'"
-```bash
+
+```shell
 # Activate virtual environment
 source .venv/bin/activate
 ```
 
 ### "Connection timeout"
-```bash
+
+```shell
 # Increase timeout in .env
 SSH_TIMEOUT=60
 ```
 
 ### "Authentication failed"
+
 - Verify SSH_USERNAME and SSH_PASSWORD in `.env`
 - Check credentials have WLC access
 - No trailing whitespace in `.env` values
 
 ### "Parser errors in logs"
+
 - Check session log: `logs/TIMESTAMP-hostname.log`
 - Look for actual command output format
 - Genie parsers expect Catalyst 9800 standard format
@@ -118,14 +132,16 @@ SSH_TIMEOUT=60
 ## Examples
 
 ### Process single WLC with CSV output
-```bash
+
+```shell
 # wlc.txt contains only one entry
 echo "wlc01.example.com" > wlc.txt
 python dudeatron_wlc.py -o ./output/wlc01
 ```
 
 ### Process multiple WLCs in batch
-```bash
+
+```shell
 # wlc.txt contains all WLCs
 cat > wlc.txt << EOF
 wlc01.example.com
@@ -138,7 +154,8 @@ python dudeatron_wlc.py -o ./output
 ```
 
 ### Using environment variable for consistent output
-```bash
+
+```shell
 # .env file
 OUTPUT_DIR=/data/wlc_exports
 
@@ -156,13 +173,13 @@ python dudeatron_wlc.py
 - **Large WLC** (1000+ APs): 2-5 minutes
 - **Extra Large WLC** (2000+ APs): 5-10 minutes
 
-*Times depend on network latency and WLC processing speed*
+Times depend on network latency and WLC processing speed
 
 ## What Gets Merged
 
 The script automatically merges data from all three commands **by AP name**:
 
-```
+```shell
 show ap summary       show ap cdp neighbors     show ap meraki monitoring summary
     ↓                        ↓                              ↓
   AP data ───────────────────────────────────────────> Single CSV row per AP

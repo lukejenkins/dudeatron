@@ -79,7 +79,7 @@ I hope you find something here to be useful.
 
 ## Project Structure
 
-```
+```shell
 dudeatron/
 ├── Core Scripts
 │   ├── dudeatron.py              # AP management (netmiko SSH, CLI parsing)
@@ -150,15 +150,18 @@ dudeatron/
 ## Getting Started
 
 **First time?** Start here:
+
 1. Read [AGENTS.md](AGENTS.md) for project overview and guidelines
 2. Follow [QUICKSTART.md](QUICKSTART.md) for basic setup
 3. See [WLC_README.md](docs/WLC_README.md) for WLC-specific operations
 
 **For security setup:**
+
 - See [SECURITY_QUICKSTART.md](docs/SECURITY_QUICKSTART.md) for quick reference
 - Run `bash SECURITY/install-hooks.sh` to enable pre-commit protection
 
 **For development:**
+
 - Check [DEVELOPMENT.md](docs/DEVELOPMENT.md) for current status and guidelines
 - Review session notes in `AGENT-Notes/` directory for historical context
 
@@ -167,6 +170,7 @@ dudeatron/
 **Operational guidance for all AI agents is centralized in [AGENTS.md](AGENTS.md).**
 
 Before starting work, please read [AGENTS.md](AGENTS.md) for:
+
 - Project overview and architecture
 - Code style and naming conventions
 - Security guidelines and data handling
